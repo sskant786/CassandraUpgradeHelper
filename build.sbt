@@ -1,4 +1,4 @@
-
+oneJarSettings
 
 name := "CassandraUpgradeHelper"
 
