@@ -1,12 +1,14 @@
 import models.EmployeeManager
-import utils.{ConfigReader, Logging}
+import utils.{CassandraClient, ConfigReader, Logging}
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by Suryakant on 17-04-2020.
  */
 
 object Start extends Logging{
-  private val employeeManager = new EmployeeManager
+  private val employeeManager = new EmployeeManager(CassandraClient.session)
 
   def main(args: Array[String]): Unit = {
     println("app started...")
@@ -25,17 +27,29 @@ object Start extends Logging{
 
     while(true) {
       doWrite(writePerMinute)
-      doRead(readPerMinute)
+      doReadUpdateDelete(readPerMinute)
     }
   }
 
   private def doWrite(wpm: Long)={
-    employeeManager.add()
+    employeeManager.add().map {
+      case true =>
+        logger.info("new employee has been on boarded")
+      case _ =>
+        logger.warn(s"Failed to on board new employee")
+    }
     Thread.sleep(delayForOperation(wpm))
   }
 
-  private def doRead(rpm: Long): Unit ={
-    employeeManager.get()
+  private def doReadUpdateDelete(rpm: Long): Unit ={
+    employeeManager.get().map{
+      case Some(employee) =>
+        logger.info(s"Got employee details [$employee]")
+        employeeManager.update(employee)
+        employeeManager.delete(employee.id)
+      case None =>
+        logger.warn(s"No entry for employee found in DB")
+    }
     Thread.sleep(delayForOperation(rpm))
   }
 
