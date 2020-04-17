@@ -35,4 +35,14 @@ tailf logs/application.out
 * execute command `chmod 777 run` - make run file executable
 * execute `./run` - it will start the application
 
+### Database schema required for the application:
+```
+CREATE TABLE test.employee (
+    id text PRIMARY KEY,
+    boardedat timestamp,
+    designation text,
+    name text,
+    salary float
+)
+```
   
