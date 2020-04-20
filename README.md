@@ -5,7 +5,7 @@ It is created to simulate basic operation on cassandra database.
 
 Number of read/write can be configured in `application.conf` file
 
-Purpose of creating this app is use while doing some maitainance activity on cassandra like:
+Purpose of creating this app is to use while doing some maitainance activity on cassandra like:
 * Upgrade
 * Migration
 * Add new node to clusture
