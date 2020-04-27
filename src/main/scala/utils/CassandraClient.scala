@@ -9,15 +9,18 @@ import com.datastax.driver.core.policies.ConstantReconnectionPolicy
 
 object CassandraClient {
 
+  private val logger = LogUtils.getLogger
   private val nodes = ConfigReader.getStringList("CASSANDRA_ENDPOINT").map(_.toList).getOrElse(List("127.0.0.1"))
   private val protocolVersion = ConfigReader.getString("CASSANDRA_CONNECTION_PROTOCOL_VERSION").getOrElse("V3")
+  logger.info(s"using CASSANDRA_CONNECTION_PROTOCOL_VERSION = $protocolVersion")
+
   private val cassandraConnectionProtocol = protocolVersion.trim.toUpperCase match {
     case "V1" => ProtocolVersion.V1
     case "V2" => ProtocolVersion.V2
     case "V3" => ProtocolVersion.V3
     case "V4" => ProtocolVersion.V4
     case "V5" => ProtocolVersion.V5
-    case _ => LogUtils.getLogger.warn(s"Protocol version [$protocolVersion] mentioned in conf is not a valid version. So using default version i.e V3")
+    case _ => logger.warn(s"Protocol version [$protocolVersion] mentioned in conf is not a valid version. So using default version i.e V3")
       ProtocolVersion.V3
   }
 
