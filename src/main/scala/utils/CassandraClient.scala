@@ -30,4 +30,6 @@ object CassandraClient {
     .build
 
   val session = cluster.connect()
+
+  logger.info(s"Protocol version used by cluster is: ${cluster.getConfiguration.getProtocolOptions.getProtocolVersion}")
 }
